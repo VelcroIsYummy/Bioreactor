@@ -1,19 +1,25 @@
 #include <Wire.h>
 #include <functional>
+#include "MAX6675.h"
 
 /* Now I hate annotating my code, but since wilson will be working on this
 and the judges will be looking at it. I guess I can swallow my pride and just
 do it for once. */
+const int dataPin   = 7; // this is for the thermocouple as it's connected
+const int clockPin  = 6; // over SPI
+const int selectPin = 5;
 
+MAX6675 thermoCouple(selectPin, dataPin, clockPin);
 
+uint32_t start, stop;
 
 // This is for a mosfet, according to a yt video i found the easiest way to
 // control a mosfet w/ arduino is to use a BJT npn also, this needs a pullup
 int PWM_pin = 3;
 
-// I choose a class because it's easy, and 
+// I choose a class because it's easy, and
 // I might have to make multiple PID loops
-class PIDControl { 
+class PIDControl {
   public:
     int kp; // gains for p i and d, gotta tune them
     int ki; // also these are bassically divided by 100 later in the code
@@ -30,7 +36,7 @@ class PIDControl {
     int doPID (int kp, int ki, int kd, float setpoint,
     std::function<float()> sensorFn)
     {
-    this->kp = kp; this->ki = ki; this->kd = kd; this->setpoint = setpoint; 
+    this->kp = kp; this->ki = ki; this->kd = kd; this->setpoint = setpoint;
     this->readSensor = sensorFn;
       val = readSensor(); // Pass in function
      //Next we calculate the error between the setpoint and the real value
@@ -41,9 +47,9 @@ class PIDControl {
       //Calculate the I value in a range on +-3
       PID_i = 0.01*PID_i + (ki * error);
       //For derivative we need real time to calculate speed change rate
-      timePrev = Time;                            
-      Time = millis();                            
-      elapsedTime = (Time - timePrev) / 1000; 
+      timePrev = Time;
+      Time = millis();
+      elapsedTime = (Time - timePrev) / 1000;
       //Now we can calculate the D value
       PID_d = 0.01*kd*((error - preverror)/elapsedTime);
       //Final total PID value is the sum of P + I + D
@@ -55,7 +61,7 @@ class PIDControl {
     }
   private:
     int PID_p = 0;    int PID_i = 0;    int PID_d = 0;
-  
+
 }
 
 
@@ -65,7 +71,12 @@ class PIDControl {
 void setup() {
   pinMode(PWM_pin,OUTPUT);
   SetPinFrequencySafe(3, 928);
+  SPI.begin();
+  thermoCouple.begin();
   PIDControl tempLoop;
+  tempLoop.kp = 70
+  tempLoop.ki = 80
+  tempLoop.kd = 60
 }
 
 void loop() {
@@ -74,7 +85,10 @@ void loop() {
   analogWrite(PWM_pin, tempLoop.PID_value);
 }
 
-
 float checkThermocouple() {
-  burger
+  start = micros();
+  int status = thermoCouple.read();
+  stop = micros();
+  float temp = thermoCouple.getCelsius();
+  return temp; // just code to get temp from the MAX6675
 }
