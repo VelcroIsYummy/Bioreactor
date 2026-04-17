@@ -8,8 +8,17 @@ do it for once. */
 const int dataPin   = 7; // this is for the thermocouple as it's connected
 const int clockPin  = 6; // over SPI
 const int selectPin = 5;
-int tempSet = 38;
-int rpmSet = 100;
+int heaterPin = 3;
+int motorPin = 9;
+int tempSet = 0;
+int rpmSet = 0;
+int heaterkp = 0;
+int heaterki = 0;
+int heaterkd = 0;
+bool on =  false;
+bool motorOn == false;
+int heaterConstraintPercentage = 100;
+int heaterConstraint = constrain(round(heaterConstraintPercentage/100 * 255), 0, 255);
 
 MAX6675 thermoCouple(selectPin, dataPin, clockPin);
 
@@ -17,7 +26,6 @@ uint32_t start, stop;
 
 // This is for a mosfet, according to a yt video i found the easiest way to
 // control a mosfet w/ arduino is to use a BJT npn also, this needs a pullup
-int PWM_pin = 3;
 
 // I choose a class because it's easy, and
 // I might have to make multiple PID loops
@@ -58,7 +66,7 @@ class PIDControl {
       PID_value = PID_p + PID_i + PID_d;
       preverror = error;
 
-      return constrain(PID_value, 0, 255);
+      return constrain(PID_value, 0, HeaterConstraintPercentage);
       // stops errors because we can't have -pwm
     }
   private:
@@ -71,7 +79,7 @@ class PIDControl {
 
 
 void setup() {
-  pinMode(PWM_pin,OUTPUT);
+  pinMode(heaterPin,OUTPUT);
   SetPinFrequencySafe(3, 928);
   SPI.begin();
   thermoCouple.begin();
@@ -82,18 +90,49 @@ void setup() {
 }
 
 void loop() {
+  if (on == true) {
   delay(50);
-  tempLoop.doPID(90,30,80, tempSet, checkThermocouple);
-  analogWrite(PWM_pin, tempLoop.PID_value);
+  analogWrite(heaterPin, tempLoop.doPID(heaterkp, heaterki, heaterkd, tempSet, checkThermocouple));
+  if (motorOn == true) {
   rpmLoop.doPID(90, 30, 80, rpmSet, checkEncoder);
-  if (Serial.available())
-  {
+  Serial.println(checkThermocouple());
+  Serial.print(",");
+  Serial.print(checkEncoder());
+  Serial.print(",");
+  Serial.print()
+  }
+  }
+  else {
+    Serial.println("Off");
+  }
+  if (Serial.available()) {
     int data = Serial.parseInt();
     if (data > 100 and < 400) { // this is for temp setting
       int tempSet = data - 100;
     }
-    if (data >= 4000) {
+    if (data == 2) {
+      bool on = true;
+    }
+    if (data == 3) {
+      bool on = false;
+    }
+    if (data == 5) {
+      motorOn = false;
+    }
+    if (data >= 1000 and < 4000) {
+      heaterConstraintPercentage = data - 1000;
+    }
+    if (data >= 4000 and < 6999) {
       int rpmSet = data - 4000;
+    }
+    if (data >=7000 and < 7999) {
+      int kp = data - 7000;
+    }
+    if (data >= 8000 and < 8999) {
+      int ki = data - 8000;
+    }
+    if (data >= 9000) {
+      int kd = data - 9000;
     }
   }
 
@@ -105,4 +144,8 @@ float checkThermocouple() {
   stop = micros();
   float temp = thermoCouple.getCelsius();
   return temp; // just code to get temp from the MAX6675
+}
+
+int checkEncoder() {
+  // todo: put in code for checking motor rpm
 }
