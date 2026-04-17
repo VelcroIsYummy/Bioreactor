@@ -8,6 +8,8 @@ do it for once. */
 const int dataPin   = 7; // this is for the thermocouple as it's connected
 const int clockPin  = 6; // over SPI
 const int selectPin = 5;
+int tempSet = 38;
+int rpmSet = 100;
 
 MAX6675 thermoCouple(selectPin, dataPin, clockPin);
 
@@ -74,15 +76,27 @@ void setup() {
   SPI.begin();
   thermoCouple.begin();
   PIDControl tempLoop;
-  tempLoop.kp = 70
-  tempLoop.ki = 80
-  tempLoop.kd = 60
+  PIDControl rpmLoop;
+  Serial.begin(9600);
+  Serial.setTimeout(50);
 }
 
 void loop() {
   delay(50);
-  tempLoop.doPID(90,30,80, 39, checkThermocouple);
+  tempLoop.doPID(90,30,80, tempSet, checkThermocouple);
   analogWrite(PWM_pin, tempLoop.PID_value);
+  rpmLoop.doPID(90, 30, 80, rpmSet, checkEncoder);
+  if (Serial.available())
+  {
+    int data = Serial.parseInt();
+    if (data > 100 and < 400) { // this is for temp setting
+      int tempSet = data - 100;
+    }
+    if (data >= 4000) {
+      int rpmSet = data - 4000;
+    }
+  }
+
 }
 
 float checkThermocouple() {
