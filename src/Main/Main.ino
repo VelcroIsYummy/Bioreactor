@@ -93,13 +93,13 @@ void loop() {
   if (on == true) {
   delay(50);
   analogWrite(heaterPin, tempLoop.doPID(heaterkp, heaterki, heaterkd, tempSet, checkThermocouple));
-  if (motorOn == true) {
-  rpmLoop.doPID(90, 30, 80, rpmSet, checkEncoder);
   Serial.println(checkThermocouple());
   Serial.print(",");
   Serial.print(checkEncoder());
   Serial.print(",");
-  Serial.print()
+  Serial.print();
+  if (motorOn == true) {
+  digitalWrite(motorPin, rpmLoop.doPID(90, 30, 80, rpmSet, checkEncoder));
   }
   }
   else {
