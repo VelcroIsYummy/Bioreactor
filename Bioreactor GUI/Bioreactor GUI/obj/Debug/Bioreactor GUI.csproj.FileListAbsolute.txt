@@ -1,0 +1,10 @@
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\bin\Debug\Bioreactor GUI.exe.config
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\bin\Debug\Bioreactor GUI.exe
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\bin\Debug\Bioreactor GUI.pdb
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\obj\Debug\Bioreactor GUI.csproj.AssemblyReference.cache
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\obj\Debug\Bioreactor_GUI.BioreactorGUI.resources
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\obj\Debug\Bioreactor_GUI.Properties.Resources.resources
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\obj\Debug\Bioreactor GUI.csproj.GenerateResource.cache
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\obj\Debug\Bioreactor GUI.csproj.CoreCompileInputs.cache
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\obj\Debug\Bioreactor GUI.exe
+C:\Users\HP\source\repos\Bioreactor GUI\Bioreactor GUI\obj\Debug\Bioreactor GUI.pdb
