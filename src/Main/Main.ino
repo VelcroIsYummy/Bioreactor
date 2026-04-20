@@ -66,7 +66,7 @@ class PIDControl {
       PID_value = PID_p + PID_i + PID_d;
       preverror = error;
 
-      return constrain(PID_value, 0, HeaterConstraintPercentage);
+      return constrain(255 - PID_value, 0, HeaterConstraint);
       // stops errors because we can't have -pwm
     }
   private:
@@ -92,14 +92,15 @@ void setup() {
 void loop() {
   if (on == true) {
   delay(50);
-  analogWrite(heaterPin, 255 - tempLoop.doPID(heaterkp, heaterki, heaterkd, tempSet, checkThermocouple));
+  analogWrite(heaterPin, tempLoop.doPID(heaterkp, heaterki, heaterkd, tempSet, checkThermocouple));
+  // reverses the PWM signal, LOW = HIGH, HIGH = LOW
   Serial.println(checkThermocouple());
   Serial.print(",");
   Serial.print(checkEncoder());
   Serial.print(",");
   Serial.print();
   if (motorOn == true) {
-  digitalWrite(motorPin, 255 - rpmLoop.doPID(90, 30, 80, rpmSet, checkEncoder));
+  digitalWrite(motorPin, rpmLoop.doPID(90, 30, 80, rpmSet, checkEncoder));
   }
   }
   else {
