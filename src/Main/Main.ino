@@ -2,9 +2,7 @@
 #include <functional>
 #include "MAX6675.h"
 
-/* Now I hate annotating my code, but since wilson will be working on this
-and the judges will be looking at it. I guess I can swallow my pride and just
-do it for once. */
+
 const int dataPin   = 7; // this is for the thermocouple as it's connected
 const int clockPin  = 6; // over SPI
 const int selectPin = 5;
@@ -16,7 +14,7 @@ int heaterkp = 0;
 int heaterki = 0;
 int heaterkd = 0;
 bool on =  false;
-bool motorOn == false;
+bool motorOn = false;
 int heaterConstraintPercentage = 100;
 int heaterConstraint = constrain(round(heaterConstraintPercentage/100 * 255), 0, 255);
 
@@ -66,13 +64,16 @@ class PIDControl {
       PID_value = PID_p + PID_i + PID_d;
       preverror = error;
 
-      return constrain(255 - PID_value, 0, HeaterConstraint);
+      return constrain(255 - PID_value, 0, 255);
       // stops errors because we can't have -pwm
     }
   private:
     int PID_p = 0;    int PID_i = 0;    int PID_d = 0;
 
-}
+};
+
+PIDControl tempLoop;
+PIDControl rpmLoop;
 
 
 
@@ -80,11 +81,8 @@ class PIDControl {
 
 void setup() {
   pinMode(heaterPin,OUTPUT);
-  SetPinFrequencySafe(3, 928);
   SPI.begin();
   thermoCouple.begin();
-  PIDControl tempLoop;
-  PIDControl rpmLoop;
   Serial.begin(9600);
   Serial.setTimeout(50);
 }
@@ -97,8 +95,6 @@ void loop() {
   Serial.println(checkThermocouple());
   Serial.print(",");
   Serial.print(checkEncoder());
-  Serial.print(",");
-  Serial.print();
   if (motorOn == true) {
   digitalWrite(motorPin, rpmLoop.doPID(90, 30, 80, rpmSet, checkEncoder));
   }
@@ -108,7 +104,7 @@ void loop() {
   }
   if (Serial.available()) {
     int data = Serial.parseInt();
-    if (data > 100 and < 400) { // this is for temp setting
+    if (data > 100 && data < 400) { // this is for temp setting
       int tempSet = data - 100;
     }
     if (data == 2) {
@@ -120,16 +116,16 @@ void loop() {
     if (data == 5) {
       motorOn = false;
     }
-    if (data >= 1000 and < 4000) {
+    if (data >= 1000 && data < 4000) {
       heaterConstraintPercentage = data - 1000;
     }
-    if (data >= 4000 and < 6999) {
+    if (data >= 4000 && data < 6999) {
       int rpmSet = data - 4000;
     }
-    if (data >=7000 and < 7999) {
+    if (data >=7000 && data < 7999) {
       int kp = data - 7000;
     }
-    if (data >= 8000 and < 8999) {
+    if (data >= 8000 && data < 8999) {
       int ki = data - 8000;
     }
     if (data >= 9000) {
