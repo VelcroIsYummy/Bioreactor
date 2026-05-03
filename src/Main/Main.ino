@@ -103,6 +103,18 @@ void serialComms(String comms) {
     comms.remove(0,1);
     double heaterKd = comms.toDouble();
   }
+  if (firstLetter == 'J') {
+    comms.remove(0,1);
+    double rpmKp = comms.toDouble();
+  }
+  if (firstLetter == 'K') {
+    comms.remove(0,1);
+    double rpmKi = comms.toDouble();
+  }
+  if (firstLetter == 'L') {
+    comms.remove(0,1);
+    double rpmKd = comms.toDouble();
+  }
 }
 
 double checkEncoder() {
