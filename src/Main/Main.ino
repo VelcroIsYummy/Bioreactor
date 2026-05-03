@@ -10,7 +10,6 @@ bool on = false; bool motorOn = false;
 double heaterSetpoint = 0; double heaterOutput = 0; double rpmSetpoint = 0; double rpmOutput = 0;
 double thermocoupleTemp = 0; double motorRpm = 0;
 const int maxRpm = 530;
-String input = "foobar";
 
 MAX6675 thermoCouple(selectPin, dataPin, clockPin);
 uint32_t start, stop;
@@ -49,7 +48,9 @@ void onLoop() {
   Serial.println(thermocoupleTemp);
   Serial.print(",");
   Serial.print(motorRpm);
-  serialComms(input);
+  if (Serial.available() > 0) {
+    serialComms(Serial.readString());
+  }
 }
 
 void onMotor() {
