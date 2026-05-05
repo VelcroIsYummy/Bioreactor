@@ -1,4 +1,4 @@
-#define ENCODEROUTPUT 663 // Okay, i'll be honest. Landscaping job plus doing this? Absolutely unable to get any hours of sleep. 
+#define ENCODEROUTPUT 663 // Okay, i'll be honest. Landscaping job plus doing this? Absolutely unable to get any hours of sleep. I'll try to tweak this code so that it will work/be compatible with ours..
 
 const int HALLSEN_A = 3; // Hall sensor A connected to pin 3 (external interrupt)
 const int MOTOR1A = 10;
