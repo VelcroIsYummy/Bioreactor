@@ -1,4 +1,6 @@
-#define ENCODEROUTPUT 663 // Okay, i'll be honest. Landscaping job plus doing this? Absolutely unable to get any hours of sleep. I'll try to tweak this code so that it will work/be compatible with ours..
+/* Okay so, hopefully the encoder works, and that the entire code doesn't crash or dismantle itself.. god my brain no work for coding */
+
+#define ENCODEROUTPUT 663 
 
 const int HALLSEN_A = 3; // Hall sensor A connected to pin 3 (external interrupt)
 const int MOTOR1A = 10;
