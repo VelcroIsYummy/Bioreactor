@@ -18,55 +18,70 @@ namespace Bioreactor_GUI
 
 
 
-    private void onButton_Click(object sender, EventArgs e)
-    {
-      serialPort1.WriteLine("2");
-    }
+        private void onButton_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("B");
+        }
 
-    private void offButton_Click(object sender, EventArgs e)
-    {
-      serialPort1.WriteLine("3");
-    }
+        private void offButton_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("C");
+        }
 
-    private void kpUpdate_Click(object sender, EventArgs e)
-    {
-      serialPort1.WriteLine("7" + kpTextbox.Text.ToString());
-    }
-    private void kiUpdate_Click(object sender, EventArgs e)
-    {
-      serialPort1.WriteLine("8" + kiTextbox.Text.ToString());
-    }
-    private void kdUpdate_Click(object sender, EventArgs e)
-    {
-      serialPort1.WriteLine("9" + kdTextbox.Text.ToString());
-    }
+        private void kpUpdate_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("G" + kpTextbox.Text.ToString());
+        }
+        private void kiUpdate_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("H" + kiTextbox.Text.ToString());
+        }
+        private void kdUpdate_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("I" + kdTextbox.Text.ToString());
+        }
 
-    private void updateTemprature_Click(object sender, EventArgs e)
-    {
-      serialPort1.WriteLine("1" + tempTextbox.Text.ToString());
-    }
+        private void updateTemprature_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("A" + tempTextbox.Text.ToString());
+        }
 
-    private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
-    {
-      string inputData = serialPort1.ReadLine();
-      d1 readTemp = new d1(decodeAndDisplayData);
-    }
-    private void decodeAndDisplayData(string inputData)
-    {
-      float bioreactorTemprature;
-      float motorRPM;
-      string[] extractedData = Regex.Split(inputData, ",");
-      bioreactorTemprature = float.Parse(extractedData[0]);
-      motorRPM = float.Parse(extractedData[1]);
-      rpmLabel.Text = extractedData[1];
-      tempLabel.Text = extractedData[0];
+        private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
+        {
+            string inputData = serialPort1.ReadLine();
+            d1 readTemp = new d1(decodeAndDisplayData);
+        }
+        private void decodeAndDisplayData(string inputData)
+        {
+            float bioreactorTemprature;
+            float motorRPM;
+            string[] tempAndRPMStrings = Regex.Split(inputData, ",");
+            bioreactorTemprature = float.Parse(tempAndRPMStrings[0]);
+            motorRPM = float.Parse(tempAndRPMStrings[1]);
+            rpmLabel.Text = tempAndRPMStrings[1];
+            tempLabel.Text = tempAndRPMStrings[0];
+            // TODO: Add Graphing.
+        }
 
-    }
+        private void rpmUpdate_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("F" + rpmTextbox.Text.ToString());
+        }
 
-    private void rpmUpdate_Click(object sender, EventArgs e)
-    {
-      serialPort1.WriteLine("4" + rpmTextbox.Text.ToString());
-      // TODO: Fix edge case where rpm is set below 100, and thus the code thinks it's 499 not 4099 like it should be
+        private void RpmUpdateKp_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("J" + rpmKpTextbox.Text.ToString());
+        }
+
+        private void rpmUpdateKi_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("K" + rpmKiTextbox.Text.ToString());
+        }
+
+        private void rpmKdUpdate_Click(object sender, EventArgs e)
+        {
+            serialPort1.WriteLine("L" + rpmKdTextbox.Text.ToString());
+        }
     }
   }
 }
