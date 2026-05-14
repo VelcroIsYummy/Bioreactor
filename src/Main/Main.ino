@@ -4,11 +4,13 @@
 
 const int dataPin = 7; const int clockPin = 6; const int selectPin = 5;
 const int heaterPin = 3; const int motorPin = 9;
+const int encoderInputPin = 2; const int encoderRevoultionsPerRotationOfMotorShaft = 11; // may be wrong
+int encoderPulses = 0;
 double heaterKp = 0; double heaterKi = 0; double heaterKd = 0;
 double rpmKp = 0; double rpmKi = 0; double rpmKd = 0;
 bool on = false; bool motorOn = false;
 double heaterSetpoint = 0; double heaterOutput = 0; double rpmSetpoint = 0; double rpmOutput = 0;
-double thermocoupleTemp = 0; double motorRpm = 0;
+double thermocoupleTemp = 0; volatile double motorRpm = 0;
 const int maxRpm = 530;
 
 MAX6675 thermoCouple(selectPin, dataPin, clockPin);
@@ -17,6 +19,8 @@ uint32_t start, stop;
 PID heaterPID(&thermocoupleTemp, &heaterOutput, &heaterSetpoint, heaterKp, heaterKi, heaterKd, DIRECT);
 PID rpmPID(&motorRpm, &rpmOutput, &rpmSetpoint, rpmKp, rpmKi, rpmKd, DIRECT);
 void setup() {
+  pinMode(encoderInputPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(encoderInputPin), incrementEncoderPulse, RISING)
   pinMode(heaterPin,OUTPUT);
   pinMode(motorPin, OUTPUT);
   SPI.begin();
@@ -119,5 +123,9 @@ void serialComms(String comms) {
 }
 
 double checkEncoder() {
+  double motorRpm = encoderPulses/encoderRevoultionsPerRotationOfMotorShaft * 60;
+}
 
+void incrementEncoderPulse() {
+  encoderPulses++;
 }
