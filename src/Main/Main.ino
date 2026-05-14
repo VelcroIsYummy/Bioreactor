@@ -2,6 +2,7 @@
 #include "MAX6675.h"
 #include <functional>
 
+
 const int dataPin = 7; const int clockPin = 6; const int selectPin = 5;
 const int heaterPin = 3; const int motorPin = 9;
 double heaterKp = 0; double heaterKi = 0; double heaterKd = 0;
