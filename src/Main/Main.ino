@@ -32,6 +32,7 @@ void setup() {
 }
 
 void loop() {
+  delay(950);
   if (on == true) {
     onLoop();
   }
@@ -41,12 +42,11 @@ double checkThermocouple() {
   start = micros();
   int status = thermoCouple.read();
   stop = micros();
-  double temp = thermoCouple.getCelsius();
-  return temp;
+  double thermocoupleTemp = thermoCouple.getCelsius();
 }
 
 void onLoop() {
-  thermocoupleTemp = checkThermocouple();
+  checkThermocouple();
   heaterPID.Compute();
   analogWrite(heaterPin, 255 - heaterOutput);
   Serial.println(thermocoupleTemp);
@@ -124,6 +124,7 @@ void serialComms(String comms) {
 
 double checkEncoder() {
   double motorRpm = encoderPulses/encoderRevoultionsPerRotationOfMotorShaft * 60;
+  encoderPulses = 0;
 }
 
 void incrementEncoderPulse() {
