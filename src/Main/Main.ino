@@ -1,34 +1,56 @@
 #include <PID_v1.h>
 #include "MAX6675.h"
 #include <functional>
+#include "WiFiS3.h"
+#include "secrets.h"
+#include <ArduinoMqttClient.h>
+using namespace std;
+
+
 
 const int dataPin = 7; const int clockPin = 6; const int selectPin = 5;
 const int heaterPin = 3; const int motorPin = 9;
+const char brokerUrl[] = "test.mosquitto.org"; const int brokerPort = 1883;
 const int encoderInputPin = 2; const int encoderRevoultionsPerRotationOfMotorShaft = 11; // may be wrong
-int encoderPulses = 0;
+volatile int encoderPulses = 0;
 double heaterKp = 0; double heaterKi = 0; double heaterKd = 0;
 double rpmKp = 0; double rpmKi = 0; double rpmKd = 0;
-bool on = false; bool motorOn = false;
+bool on = false; bool motorOn = false; bool heaterOn = false;
 double heaterSetpoint = 0; double heaterOutput = 0; double rpmSetpoint = 0; double rpmOutput = 0;
-double thermocoupleTemp = 0; volatile double motorRpm = 0;
+double thermocoupleTemp = 0; double motorRpm = 0;
 const int maxRpm = 530;
 
 MAX6675 thermoCouple(selectPin, dataPin, clockPin);
 uint32_t start, stop;
+WiFiClient client;
+MqttClient mqttClient(client);
 
 PID heaterPID(&thermocoupleTemp, &heaterOutput, &heaterSetpoint, heaterKp, heaterKi, heaterKd, DIRECT);
 PID rpmPID(&motorRpm, &rpmOutput, &rpmSetpoint, rpmKp, rpmKi, rpmKd, DIRECT);
 void setup() {
+  WiFi.begin(SSID, PASS);
+  delay(10000);
+  mqttClient.connect(brokerUrl, brokerPort);
+  mqttClient.onMessage(reciveMqttMessage);
+  mqttClient.subscribe("BioreactorGui/onOffButton");
+  mqttClient.subscribe("BioreactorGui/heaterOnOffButton");
+  mqttClient.subscribe("BioreactorGui/motorOnOffButton");
+  mqttClient.subscribe("BioreactorGui/heaterSetpoint");
+  mqttClient.subscribe("BioreactorGui/heaterKp");
+  mqttClient.subscribe("BioreactorGui/heaterKi");
+  mqttClient.subscribe("BioreactorGui/heaterKd");
+  mqttClient.subscribe("BioreactorGui/rpmSetpoint");
+  mqttClient.subscribe("BioreactorGui/rpmKp");
+  mqttClient.subscribe("BioreactorGui/rpmKi");
+  mqttClient.subscribe("BioreactorGui/rpmKd");
   pinMode(encoderInputPin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(encoderInputPin), incrementEncoderPulse, RISING)
+  attachInterrupt(digitalPinToInterrupt(encoderInputPin), incrementEncoderPulse, RISING);
   pinMode(heaterPin,OUTPUT);
   pinMode(motorPin, OUTPUT);
   SPI.begin();
   thermoCouple.begin();
   heaterPID.SetMode(AUTOMATIC);
   rpmPID.SetMode(AUTOMATIC);
-  Serial.begin(9600);
-  Serial.setTimeout(50);
 }
 
 void loop() {
@@ -46,80 +68,32 @@ double checkThermocouple() {
 }
 
 void onLoop() {
+  mqttClient.poll();
+  sendMqttMessage("Bioreactor/ThermocoupleTemprature", String(thermocoupleTemp));
+  sendMqttMessage("Bioreactor/MotorRpm", String(thermocoupleTemp));
+  analogWrite(heaterPin, 255 - heaterOutput);
+  if (heaterOn == true) {
+    onHeater();
+  }
+  if (heaterOn != true) {
+    digitalWrite(heaterPin, 255);
+  }
+  if (motorOn == true) {
+    onMotor();
+  }
+  if (motorOn != true) {
+    digitalWrite(motorPin, 255);
+  }
+}
+
+void onHeater() {
   checkThermocouple();
   heaterPID.Compute();
-  analogWrite(heaterPin, 255 - heaterOutput);
-  Serial.println(thermocoupleTemp);
-  Serial.print(",");
-  Serial.print(motorRpm);
-  if (Serial.available() > 0) {
-    serialComms(Serial.readString());
-  }
 }
 
 void onMotor() {
-  double motorRpm = checkEncoder();
-}
-
-void serialComms(String comms) {
-  char firstLetter = comms.charAt(0);
-  if (firstLetter == 'A') {
-    comms.remove(0,1);
-    double tempSet = comms.toDouble();
-    if (tempSet < 60) {
-      double heaterSetpoint = tempSet;
-    }
-    else {
-      double heaterSetpoint = 0;
-    }
-  }
-  if (firstLetter == 'B') {
-    on = true;
-  }
-
-  if (firstLetter == 'C') {
-    on = false;
-  }
-  if (firstLetter == 'D') {
-    motorOn = true;
-  }
-  if (firstLetter == 'E') {
-    motorOn = false;
-  }
-  if (firstLetter == 'F') {
-    comms.remove(0,1);
-    double rpmSet = comms.toDouble();
-    if (rpmSet <= maxRpm) {
-      double rpmSetpoint = rpmSet;
-    }
-    else {
-      double rpmSetpoint = 0;
-    }
-  }
-  if (firstLetter == 'G') {
-    comms.remove(0,1);
-    double heaterKp = comms.toDouble();
-  }
-  if (firstLetter == 'H') {
-    comms.remove(0,1);
-    double heaterKi = comms.toDouble();
-  }
-  if (firstLetter == 'I') {
-    comms.remove(0,1);
-    double heaterKd = comms.toDouble();
-  }
-  if (firstLetter == 'J') {
-    comms.remove(0,1);
-    double rpmKp = comms.toDouble();
-  }
-  if (firstLetter == 'K') {
-    comms.remove(0,1);
-    double rpmKi = comms.toDouble();
-  }
-  if (firstLetter == 'L') {
-    comms.remove(0,1);
-    double rpmKd = comms.toDouble();
-  }
+  checkEncoder();
+  rpmPID.Compute();
 }
 
 double checkEncoder() {
@@ -130,3 +104,60 @@ double checkEncoder() {
 void incrementEncoderPulse() {
   encoderPulses++;
 }
+
+void sendMqttMessage(String topic, String input) {
+  mqttClient.beginMessage(topic);
+  mqttClient.print(input);
+  mqttClient.endMessage();
+}
+
+void reciveMqttMessage(int messageSize) {
+  String messageTopic = mqttClient.messageTopic();
+  if (messageTopic == "BioreactorGui/onOffButton") {
+    if ("True" == String(mqttClient.read())) {
+      on = true;
+    }
+    else {
+      on = false;
+    }
+  }
+  if (messageTopic == "BioreactorGui/heaterOnOffButton") {
+    if ("True" == String(mqttClient.read())) {
+      heaterOn = true;
+    }
+    else {
+      heaterOn = false;
+    }
+  if (messageTopic == "BioreactorGui/motorOnOffButton") {
+    if ("True" == String(mqttClient.read())) {
+      heaterOn = true;
+    }
+    else {
+      heaterOn = false;
+    }
+  }
+  if (messageTopic == "BioreactorGui/heaterSetpoint") {
+    double heaterSetpoint = mqttClient.read();
+  }
+  if (messageTopic == "BioreactorGui/heaterKp") {
+    double heaterKp = mqttClient.read();
+  }
+  if (messageTopic == "BioreactorGui/heaterKi") {
+    double heaterKi = mqttClient.read();
+  }
+  if (messageTopic == "BioreactorGui/heaterKd") {
+    double heaterKd = mqttClient.read();
+  }
+  if (messageTopic == "BioreactorGui/rpmSetpoint") {
+    double rpmSetpoint = mqttClient.read();
+  }
+  if (messageTopic == "BioreactorGui/rpmKp") {
+    double rpmKp = mqttClient.read();
+  }
+  if (messageTopic == "BioreactorGui/rpmKi") {
+    double rpmKi = mqttClient.read();
+  }
+  if (messageTopic == "BioreactorGui/rpmKd") {
+    double rpmKd = mqttClient.read();
+  }
+}}
