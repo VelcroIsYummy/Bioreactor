@@ -1,0 +1,75 @@
+h1 {
+  font-family: "Outfit";
+  font-weight: 600;
+  font-size: 6vw;
+  color: #9f715d;
+  position: relative;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.graph {
+  display: flex;
+  height: 20vw;
+  width: 20vw;
+  display: block;
+  margin: 0 auto;
+}
+
+.centerInformaticPanel {
+  margin-top: 10px;
+  width: 60vw;
+  height: max(60vh, 400px);
+  background-color: #9f715d;
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  border: 4px solid black;
+  padding-top: 40px;
+}
+
+.containerOfDosingAndTempSlashRPM {
+  display: flex;
+}
+
+.dosingAndSuch {
+}
+
+body {
+  background-color: #eed1b0;
+}
+
+p {
+  font-family: "Geist";
+  font-weight: 600;
+  color: #eed1b0;
+}
+
+table {
+  font-family: "Geist";
+  font-weight: 600;
+  font-size: 1.3vw;
+  color: #eed1b0;
+  border: 3px solid #eed1b0;
+  border-collapse: collapse;
+  border-radius: 4px;
+}
+
+.dosingTable {
+  padding: 20px;
+  padding-top: 0px !important;
+  padding-bottom: 3.8vw;
+}
+
+th,
+td {
+  border: 3px solid #eed1b0;
+}
+
+#tempGraph {
+  display: inline-block;
+}

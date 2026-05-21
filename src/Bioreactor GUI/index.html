@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Bioreactor Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="title">
+      <h1 id="center">Bioreactor Dashboard</h1>
+    </div>
+    <div class="centerInformaticPanel">
+      <div class="containerOfDosingAndTempSlashRPM">
+        <div class="graph">
+          <div id="tempgraph">
+            <canvas
+              id="tempChart"
+              style="position: relative; justify-content: center"
+            ></canvas>
+          </div>
+          <p id="currentTemprature">Current Temprature: 0°C</p>
+          <div id="rpmGraph">
+            <canvas
+              id="rpmChart"
+              style="position: relative; justify-content: center"
+            ></canvas>
+          </div>
+          <p id="currentRpmTextLabel">Current RPM: 0RPM</p>
+        </div>
+        <div class="graph dosingAndSuch">
+          <div class="dosingTable">
+            <p>Dosing</p>
+            <table>
+              <tr>
+                <th>Pump Group</th>
+                <th>mL/10min</th>
+              </tr>
+              <tr>
+                <td>#1</td>
+                <td id="perlGroup1mLPer10Minute">0.0mL/10min</td>
+              </tr>
+              <tr>
+                <td>#2</td>
+                <td id="perlGroup2mLPer10Minute">0.0mL/10min</td>
+              </tr>
+            </table>
+          </div>
+          <div id="od600Graph">
+            <canvas
+              id="od600Chart"
+              style="position: relative; justify-content: center"
+            ></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.10.3/mqtt.min.js"></script>
+    <script src="mqttimplementation.js" type="text/javascript"></script>
+  </body>
+</html>
