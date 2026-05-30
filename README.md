@@ -37,3 +37,6 @@ For this project to work you will need to download the following libraries in Ar
 - WiFiS3 (included with Arduino IDE)
 - ArduinoMqttClient (https://github.com/arduino-libraries/ArduinoMqttClient)
 - RTC (https://github.com/cvmanjoo/RTC)
+
+# Disclamer
+While I made most of this project myself, I obviously didn't create certain things like the libraries. I have attached my Journal in the Journal folder, this contains most of the stuff I used (documentation and such) however I also used resources like StackOverflow for this. Another thing to note, I did not create the original models for the ported caps, I simply _**CANNOT**_ make threads for some reason.
