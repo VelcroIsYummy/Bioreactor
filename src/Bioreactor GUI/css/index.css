@@ -10,6 +10,7 @@ h1 {
   display: flex;
   justify-content: center;
   position: relative;
+  bottom: 4vw;
 }
 
 .graph {
@@ -32,11 +33,24 @@ h1 {
   padding-top: 40px;
 }
 
-.containerOfDosingAndTempSlashRPM {
+.motorContainer {
   display: flex;
+  justify-content: center;
+  position: relative;
+  bottom: 7vw;
 }
 
-.dosingAndSuch {
+.motor1Dosing,
+.motor2Dosing,
+.motor3Dosing {
+  display: inline-block;
+  width: 25vw;
+  height: 30vh;
+  background-color: #9f715d;
+}
+
+.containerOfDosingAndTempSlashRPM {
+  display: flex;
 }
 
 body {
@@ -47,6 +61,7 @@ p {
   font-family: "Geist";
   font-weight: 600;
   color: #eed1b0;
+  font-size: 1.2vw;
 }
 
 table {
@@ -72,4 +87,8 @@ td {
 
 #tempGraph {
   display: inline-block;
+}
+
+#inverseColour {
+  color:#eed1b0;
 }
