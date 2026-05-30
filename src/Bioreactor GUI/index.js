@@ -1,5 +1,6 @@
 const broker = "wss://public.cloud.shiftr.io";
-
+const requester = new XMLHttpRequest();
+const databaseURL = "http://127.0.0.1:8000";
 let options = {
   clean: true,
   connectTimeout: 10000,
@@ -18,7 +19,18 @@ function addDataToAnyChart(chart, label, data) {
   chart.update();
 }
 
-let datah = Papa.parse("20,15,20,405,40598,349\n20,15,20,405,40598,349\n20,15,20,405,40598,349");
+requester.onload = () => {
+  if (xhr.readyState === xhr.DONE) {
+      console.log(xhr.response);
+      console.log(xhr.responseText);
+  }
+};
+
+requester.open("GET", databaseURL);
+requester.responseType = "text";
+let databaseData = requester.responseText;
+console.log(databaseData);
+let datah = Papa.parse(databaseData);
 datah = datah["data"];
 console.log(datah, {
   header: true,
@@ -104,7 +116,9 @@ client.on("connect", () => {
 });
 
 function checkIfDatabaseUpdate() {
-  if (datah != Papa.parse("http://127.0.0.1:8000/reciveTheEntireDatabase")) {
+  requester.open("GET", databaseURL);
+  let databaseData = requester.responseText;
+  if (datah != Papa.parse(databaseData)) {
     element = datah.at(-1);
     addDataToAnyChart(tempChart, element[4], element[0]);
     addDataToAnyChart(rpmChart, element[4], element[2]);

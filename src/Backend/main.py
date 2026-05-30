@@ -21,16 +21,14 @@ async def updateDb(request: Request):
     return 401;
   recivedKey = sha256.hexdigest();
   print(recivedKey)
-  if recivedKey != apiKey:
+  if recivedKey == apiKey:
     try:
       with open("database.csv", "a") as database:
         temp = data["temperature"];
         pH = data["pH"];
         rpm = data["rpm"];
         od600 = data["od600"];
-        time = time.time()
-        database.write(f"{temp}, {pH}, {rpm}, {od600}, {time}\n");
+        database.write(f"{temp}, {pH}, {rpm}, {od600}, {time.time()}\n");
+        return 200;
     except:
       return 401;
-  return 200;
-
