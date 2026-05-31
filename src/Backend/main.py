@@ -5,6 +5,11 @@ import hashlib
 
 api = FastAPI();
 
+@api.get("/getConfig")
+async def requestConfig():
+  with open("config.csv") as config:
+    return config.read();
+
 @api.get("/reciveTheEntireDatabase")
 async def requestDb():
   with open("database.csv") as database:

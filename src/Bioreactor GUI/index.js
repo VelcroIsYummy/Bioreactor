@@ -1,6 +1,6 @@
 const broker = "wss://public.cloud.shiftr.io";
 const requester = new XMLHttpRequest();
-const databaseURL = "http://127.0.0.1:8000";
+const databaseURL = "http://127.0.0.1:8000/reciveTheEntireDatabase";
 const tempBox = document.getElementById("tempSelector");
 const rpmBox = document.getElementById("rpmSelector");
 const motorKpBox = document.getElementById("motorKpSelector");
@@ -26,6 +26,19 @@ function addDataToAnyChart(chart, label, data) {
     dataset.data.push(data);
   });
   chart.update();
+}
+
+function updateDosingLabels() {
+  requester.open("GET", databaseURL);
+  requester.responseType = "text";
+  let databaseData = requester.responseText;
+  console.log(databaseData);
+  let datah = Papa.parse(databaseData);
+  datah = datah["data"];
+
+  currMls1.innerHTML = datah[1];
+  currMls1.innerHTML = datah[2];
+  currMls1.innerHTML = datah[3];
 }
 
 tempBox.addEventListener("change", (event) => {
@@ -67,10 +80,6 @@ let databaseData = requester.responseText;
 console.log(databaseData);
 let datah = Papa.parse(databaseData);
 datah = datah["data"];
-console.log(datah, {
-  header: true,
-  dynamicTyping: true,
-});
 
 const temper = document.getElementById("tempChart");
 const rpmer = document.getElementById("rpmChart");
@@ -177,4 +186,5 @@ function checkIfDatabaseUpdate() {
   }
 }
 
+setInterval(updateDosingLabels, 10000);
 setInterval(checkIfDatabaseUpdate, 1000);

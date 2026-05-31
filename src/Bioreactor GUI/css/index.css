@@ -6,7 +6,18 @@ h1 {
   position: relative;
 }
 
+.parent {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
 
+.child {
+  padding-top: 4px !important;
+  padding: 16px;
+  text-align: center;
+  border: 3px solid white;
+}
 
 .title {
   display: flex;
@@ -87,7 +98,9 @@ button:active {
   display: inline-block;
   width: 25vw;
   height: 30vh;
-  background-color: #9f715d;
+  background-color: black;
+  border-radius: 7px;
+  border: 3px solid white;
 }
 
 .containerOfDosingAndTempSlashRPM {
@@ -131,7 +144,7 @@ td {
   display: inline-block;
 }
 
-#inverseColour {
+#centre {
   color:white;
   display: flex;
   justify-content: center;
