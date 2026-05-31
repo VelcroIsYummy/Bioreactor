@@ -9,12 +9,12 @@
 #include <Adafruit_Sensor.h>
 #include "Adafruit_TSL2591.h"
 #include <HttpClient.h>
-#define PUPPETADDR 0x29
+
 using namespace std;
 
 
 long dosesGiven = 0; float motor1DisplacementAmount = 0; float motor2DisplacementAmount = 0; 
-float motor3DisplacementAmount = 0;
+float motor3DisplacementAmount = 0; int timeToDosing = 600;
 const int perlestaticMotor1Pin = 10; const int perlestaticMotor2Pin = 11; 
 const int perlestaticMotor3Pin = 12; const int perlestaticMotor4Pin = 13;
 int dosingTimer = 0; int msPerMl = 1000; float int motorFluidCaptureDelay = 100;
@@ -32,7 +32,7 @@ bool on = false; bool motorOn = false; bool heaterOn = false;
 double heaterSetpoint = 0; double heaterOutput = 0; double rpmSetpoint = 0; 
 double rpmOutput = 0;
 double thermocoupleTemp = 0; double motorRpm = 0;
-const int maxRpm = 530;
+const int maxRpm = 530; const int maxTemp = 60;
 
 MAX6675 thermoCouple(selectPin, dataPin, clockPin);
 uint32_t start, stop;
@@ -135,7 +135,7 @@ void onLoop() {
   if (motorOn != true) {
     digitalWrite(motorPin, 255);
   }
-  if (dosingTimer == 600) {
+  if (dosingTimer == timeToDosing) {
     motorCallback();
   }
 }
@@ -193,7 +193,9 @@ void reciveMqttMessage(int messageSize) {
   }
   if (messageTopic == "BioreactorGui/heaterSetpoint") {
     double payload = String(mqttClient.read()).toDouble();
+    if (payload <= maxTemp) {
     heaterSetpoint = payload;
+    }
   }
   if (messageTopic == "BioreactorGui/heaterKp") {
     double payload = String(mqttClient.read()).toDouble();
@@ -209,7 +211,9 @@ void reciveMqttMessage(int messageSize) {
   }
   if (messageTopic == "BioreactorGui/rpmSetpoint") {
     double payload = String(mqttClient.read()).toDouble();
-    rpmSetpoint = payload;
+    if (payload <= maxRpm) {
+      rpmSetpoint = payload;
+    }
   }
   if (messageTopic == "BioreactorGui/rpmKp") {
     payload = String(mqttClient.read()).toDouble();

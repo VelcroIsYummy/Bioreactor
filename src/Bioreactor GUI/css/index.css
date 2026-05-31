@@ -2,9 +2,11 @@ h1 {
   font-family: "Outfit";
   font-weight: 600;
   font-size: 6vw;
-  color: #9f715d;
+  color: white;
   position: relative;
 }
+
+
 
 .title {
   display: flex;
@@ -21,15 +23,54 @@ h1 {
   margin: 0 auto;
 }
 
+.panels {
+  display: flex;
+}
+
+.toggles {
+  margin-top: 10px;
+  width: 14vw;
+  height: max(60vh, 400px);
+  background-color: black;
+  border-radius: 8px;
+  border: 4px solid white;
+  padding-top: 40px;
+  display: grid;
+  place-items: center;
+}
+
+button {
+  height: 8vh;
+  width: 8vw;
+  border-radius: 7px;
+  background-color: black;
+  color: white;
+  font-family: "Geist";
+  font-weight: 600;
+  border: 2px solid white;
+  transition-duration: 300ms;
+}
+
+button:hover {
+  color: black;
+  background-color: white;
+  cursor: url("https://fallout.hackclub.com/cursors/pointer.svg"), auto;
+}
+
+button:active {
+  background-color: black;
+  color: white;
+}
+
 .centerInformaticPanel {
   margin-top: 10px;
   width: 60vw;
   height: max(60vh, 400px);
-  background-color: #9f715d;
+  background-color: black;
   display: block;
   margin: 0 auto;
   border-radius: 8px;
-  border: 4px solid black;
+  border: 4px solid white;
   padding-top: 40px;
 }
 
@@ -54,13 +95,14 @@ h1 {
 }
 
 body {
-  background-color: #eed1b0;
+  background-color: black;
+  cursor: url("https://fallout.hackclub.com/cursors/arrowhead.svg"), auto;
 }
 
 p {
   font-family: "Geist";
   font-weight: 600;
-  color: #eed1b0;
+  color: white;
   font-size: 1.2vw;
 }
 
@@ -68,8 +110,8 @@ table {
   font-family: "Geist";
   font-weight: 600;
   font-size: 1.3vw;
-  color: #eed1b0;
-  border: 3px solid #eed1b0;
+  color: white;
+  border: 3px solid white;
   border-collapse: collapse;
   border-radius: 4px;
 }
@@ -82,7 +124,7 @@ table {
 
 th,
 td {
-  border: 3px solid #eed1b0;
+  border: 3px solid white;
 }
 
 #tempGraph {
@@ -90,5 +132,7 @@ td {
 }
 
 #inverseColour {
-  color:#eed1b0;
+  color:white;
+  display: flex;
+  justify-content: center;
 }

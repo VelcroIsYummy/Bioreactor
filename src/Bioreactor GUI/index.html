@@ -15,54 +15,77 @@
     <div class="title">
       <h1 id="center">Bioreactor Dashboard</h1>
     </div>
-    <div class="centerInformaticPanel">
-      <div class="containerOfDosingAndTempSlashRPM">
-        <div class="graph">
-          <div id="tempgraph">
-            <canvas
-              id="tempChart"
-              style="position: relative; justify-content: center"
-            ></canvas>
+    <span class="panels">
+      <div class="toggles">
+        <button>Motor On/Off</button>
+        <button>Heater On/Off</button>
+        <input type="number" id="tempSelector" placeholder="Temprature SP">
+        <input type="number" id="rpmSelector" placeholder="RPM SP">
+        <button>Dosing</button>
+      </div>
+      <div class="centerInformaticPanel">
+        <div class="containerOfDosingAndTempSlashRPM">
+          <div class="graph">
+            <div id="tempgraph">
+              <canvas
+                id="tempChart"
+                style="position: relative; justify-content: center"
+              ></canvas>
+            </div>
+            <p id="currentTemprature">Current Temprature: 0°C</p>
+            <div id="rpmGraph">
+              <canvas
+                id="rpmChart"
+                style="position: relative; justify-content: center"
+              ></canvas>
+            </div>
+            <p id="currentRpmTextLabel">Current RPM: 0RPM</p>
           </div>
-          <p id="currentTemprature">Current Temprature: 0°C</p>
-          <div id="rpmGraph">
-            <canvas
-              id="rpmChart"
-              style="position: relative; justify-content: center"
-            ></canvas>
+          <div class="graph dosingAndSuch">
+            <div class="dosingTable">
+              <p>Dosing</p>
+              <table>
+                <tr>
+                  <th>Pump Group</th>
+                  <th>mL/10min</th>
+                </tr>
+                <tr>
+                  <td>#1</td>
+                  <td id="perlGroup1mLPer10Minute">0.0mL/10min</td>
+                </tr>
+                <tr>
+                  <td>#2</td>
+                  <td id="perlGroup2mLPer10Minute">0.0mL/10min</td>
+                </tr>
+              </table>
+            </div>
+            <div id="od600Graph">
+              <canvas
+                id="od600Chart"
+                style="position: relative; justify-content: center"
+              ></canvas>
+            </div>
+            <p id="currentOD600TextLabel">Current OD600: 0.00Dλ</p>
           </div>
-          <p id="currentRpmTextLabel">Current RPM: 0RPM</p>
-        </div>
-        <div class="graph dosingAndSuch">
-          <div class="dosingTable">
-            <p>Dosing</p>
-            <table>
-              <tr>
-                <th>Pump Group</th>
-                <th>mL/10min</th>
-              </tr>
-              <tr>
-                <td>#1</td>
-                <td id="perlGroup1mLPer10Minute">0.0mL/10min</td>
-              </tr>
-              <tr>
-                <td>#2</td>
-                <td id="perlGroup2mLPer10Minute">0.0mL/10min</td>
-              </tr>
-            </table>
-          </div>
-          <div id="od600Graph">
-            <canvas
-              id="od600Chart"
-              style="position: relative; justify-content: center"
-            ></canvas>
-          </div>
-          <p id="currentOD600TextLabel">Current OD600: 0.00Dλ</p>
         </div>
       </div>
-    </div>
+      <div class="toggles">
+        <input type="number" id="motorKpSelector" placeholder="Motor Kp">
+        <input type="number" id="motorKiSelector" placeholder="Motor Ki">
+        <input type="number" id="motorKdSelector" placeholder="Motor Kd">
+        <input type="number" id="heaterKpSelector" placeholder="Heater Kp">
+        <input type="number" id="heaterKiSelector" placeholder="Heater Ki">
+        <input type="number" id="heaterKdSelector" placeholder="Heater Kd">
+      </div>
+    </span>
+    <footer>
+      <p id="inverseColour">
+        A Website by Anahad Khosa, Design inspired by
+        <a href="https://fallout.hackclub.com">Fallout</a>
+        (Some elements also taken directly)
+      </p>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
     <link rel="stylesheet" href="./css/index.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.10.3/mqtt.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
