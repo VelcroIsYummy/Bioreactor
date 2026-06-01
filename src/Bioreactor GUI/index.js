@@ -9,6 +9,12 @@ const motorKdBox = document.getElementById("motorKdSelector");
 const heaterKpBox = document.getElementById("heaterKpSelector");
 const heaterKiBox = document.getElementById("heaterKiSelector");
 const heaterKdBox = document.getElementById("heaterKdSelector");
+const heaterOn = document.getElementById("heaterOn");
+const heaterOff = document.getElementById("heaterOff");
+const motorOn = document.getElementById("motorOn");
+const motorOff = document.getElementById("motorOff");
+const fanOn = document.getElementById("fanOn");
+const fanOff = document.getElementById("fanOff");
 Chart.defaults.backgroundColor = '#ffffff';
 Chart.defaults.borderColor = '#ffffff';
 Chart.defaults.color = '#FFFFFF';
@@ -65,6 +71,25 @@ heaterKiBox.addEventListener("change", (event) => {
 });
 heaterKdBox.addEventListener("change", (event) => {
   client.publish("BioreactorGui/heaterKd", heaterKdBox.value, options);
+});
+
+heaterOn.addEventListener("click", (event) => {
+  client.publish("BioreactorGui/heaterOnOffButton", "true", options);
+});
+heaterOff.addEventListener("click", (event) => {
+  client.publish("BioreactorGui/heaterOnOffButton", "false", options);
+});
+motorOn.addEventListener("click", (event) => {
+  client.publish("BioreactorGui/motorOnOffButton", "true", options);
+});
+motorOff.addEventListener("click", (event) => {
+  client.publish("BioreactorGui/motorOnOffButton", "false", options);
+});
+fanOn.addEventListener("click", (event) => {
+  client.publish("BioreactorGui/fanOnOffButton", "true", options);
+});
+fanOff.addEventListener("click", (event) => {
+  client.publish("BioreactorGui/fanOnOffButton", "false", options);
 });
 
 requester.onload = () => {

@@ -18,11 +18,13 @@
     </div>
     <span class="panels">
       <div class="toggles">
-        <button>Motor On/Off</button>
-        <button>Heater On/Off</button>
+        <button id="motorOn">Motor On</button>
+        <button id="motorOff">Motor Off</button>
+        <button id="heaterOn">Heater On</button>
+        <button id="heaterOff">Heater Off</button>
+        <button onclick="location.href = '/dosing.html';">Dosing</button>
         <input type="number" id="tempSelector" placeholder="Temprature SP">
         <input type="number" id="rpmSelector" placeholder="RPM SP">
-        <button onclick="location.href = '/dosing.html';">Dosing</button>
       </div>
       <div class="centerInformaticPanel">
         <div class="containerOfDosingAndTempSlashRPM">
@@ -71,6 +73,8 @@
         </div>
       </div>
       <div class="toggles">
+        <button id="fanOn">Fan On</button>
+        <button id="fanOff">Fan Off</button>
         <input type="number" id="motorKpSelector" placeholder="Motor Kp">
         <input type="number" id="motorKiSelector" placeholder="Motor Ki">
         <input type="number" id="motorKdSelector" placeholder="Motor Kd">

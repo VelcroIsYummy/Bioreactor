@@ -23,7 +23,6 @@ function updateDosingLabels() {
   console.log(databaseData);
   let datah = Papa.parse(databaseData);
   datah = datah["data"];
-
   currMls1.innerHTML = datah[1];
   currMls1.innerHTML = datah[2];
   currMls1.innerHTML = datah[3];

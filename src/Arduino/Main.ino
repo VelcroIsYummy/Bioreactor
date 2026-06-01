@@ -12,8 +12,8 @@
 
 using namespace std;
 
-
-long dosesGiven = 0; float motor1DisplacementAmount = 0; float motor2DisplacementAmount = 0; 
+long dosesGiven = 0; float motor1DisplacementAmount = 0; float motor2DisplacementAmount = 0;
+bool fanOn = false; const int fanPin = 8;
 float motor3DisplacementAmount = 0; int timeToDosing = 600;
 const int perlestaticMotor1Pin = 10; const int perlestaticMotor2Pin = 11; 
 const int perlestaticMotor3Pin = 12; const int perlestaticMotor4Pin = 13;
@@ -21,8 +21,7 @@ int dosingTimer = 0; int msPerMl = 1000; float int motorFluidCaptureDelay = 100;
 const int dataPin = 7; const int clockPin = 6; const int selectPin = 5;
 const int heaterPin = 3; const int motorPin = 9;
 const int ledPin = 4;
-int telemetryTimeSinceLastMessage = 0; const char nestIp[] = "111.111.111.111"; 
-const int databasePort = 55874; 
+int telemetryTimeSinceLastMessage = 0;
 const char brokerUrl[] = "test.mosquitto.org"; const int brokerPort = 1883;
 const int encoderInputPin = 2; const int encoderRevoultionsPerRotationOfMotorShaft = 11;
 volatile int encoderPulses = 0;
@@ -36,7 +35,6 @@ const int maxRpm = 530; const int maxTemp = 60;
 
 MAX6675 thermoCouple(selectPin, dataPin, clockPin);
 uint32_t start, stop;
-
 
 PID heaterPID(&thermocoupleTemp, &heaterOutput, &heaterSetpoint, 
   heaterKp, heaterKi, heaterKd, DIRECT);
@@ -57,6 +55,7 @@ void setup() {
   mqttClient.onMessage(reciveMqttMessage);
   mqttClient.subscribe("BioreactorGui/onOffButton");
   mqttClient.subscribe("BioreactorGui/heaterOnOffButton");
+  mqttClient.subscribe("BioreactorGui/fanOnOffButton");
   mqttClient.subscribe("BioreactorGui/motorOnOffButton");
   mqttClient.subscribe("BioreactorGui/heaterSetpoint");
   mqttClient.subscribe("BioreactorGui/heaterKp");
@@ -135,6 +134,12 @@ void onLoop() {
   if (motorOn != true) {
     digitalWrite(motorPin, 255);
   }
+  if (fanOn == true) {
+    onFan();
+  }
+  if (fanOn != true) {
+    digitalWrite(fanPin, 255);
+  }
   if (dosingTimer == timeToDosing) {
     motorCallback();
   }
@@ -148,6 +153,10 @@ void onHeater() {
 
 void onOd600() {
   od600Measurement();
+}
+
+void onFan() {
+  digitalWrite(fanPin, HIGH);
 }
 
 void onMotor() {
@@ -169,7 +178,7 @@ void incrementEncoderPulse() {
 void reciveMqttMessage(int messageSize) {
   String messageTopic = mqttClient.messageTopic();
   if (messageTopic == "BioreactorGui/onOffButton") {
-    if ("True" == String(mqttClient.read())) {
+    if ("true" == String(mqttClient.read())) {
       on = true;
     }
     else {
@@ -177,18 +186,26 @@ void reciveMqttMessage(int messageSize) {
     }
   }
   if (messageTopic == "BioreactorGui/heaterOnOffButton") {
-    if ("True" == String(mqttClient.read())) {
+    if ("true" == String(mqttClient.read())) {
       heaterOn = true;
     }
     else {
       heaterOn = false;
     }
   if (messageTopic == "BioreactorGui/motorOnOffButton") {
-    if ("True" == String(mqttClient.read())) {
+    if ("true" == String(mqttClient.read())) {
       heaterOn = true;
     }
     else {
       heaterOn = false;
+    }
+  }
+  if (messageTopic == "BioreactorGui/fanOnOffButton") {
+    if ("true" == String(mqttClient.read())) {
+      fanOn = true;
+    }
+    else {
+      fanOn = false;
     }
   }
   if (messageTopic == "BioreactorGui/heaterSetpoint") {
@@ -275,7 +292,7 @@ void motorCallback() {
 
 void sendTelemetry() {
   if (telemetryTimeSinceLastMessage == 10) {
-  http.begin(nestIp, databasePort);
+  http.begin(NESTIP, DATABASEPORT);
   http.addHeader("Content-Type", "application/json"")
   http.POST(std::format(
     "{\"temperature\":\"{}\",\"pH\":\"{}\",\"rpm\":\"{}\",\"od600\":\"{}\",\"key\":\"{}\"}",
